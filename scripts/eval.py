@@ -124,7 +124,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--dataset", default=CFG.dataset)
     p.add_argument("--strategies", nargs="+", default=list(STRATEGIES), choices=list(STRATEGIES))
-    p.add_argument("--faithfulness-queries", type=int, default=20, help="0 to skip generation")
+    p.add_argument("--faithfulness-queries", type=int, default=5, help="0 to skip generation")
     p.add_argument("--gen-model", default=CFG.gen_model)
     p.add_argument("--seed", type=int, default=13)
     p.add_argument("--faithfulness-only", action="store_true",

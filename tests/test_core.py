@@ -70,3 +70,10 @@ def test_evidence_sentence_cleanup():
 def test_bare_citation_attribution():
     from rag.generate import normalize_claim
     assert normalize_claim('[1] states "mosGCTL-1 is induced by WNV"') == "MosGCTL-1 is induced by WNV"
+
+
+def test_evidence_header_keeps_leading_citation():
+    from rag.generate import evidence_sentences, normalize_claim, parse_answer
+    v, ev = parse_answer('Verdict: Supported\n\nEvidence: \n[1] states "Gels stiffen."\n**Verdict**')
+    assert v == "Supported"
+    assert normalize_claim(evidence_sentences(ev)[0]) == "Gels stiffen."

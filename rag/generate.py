@@ -17,8 +17,8 @@ def build_prompt(query: str, passages: list[str]) -> str:
     return f"Passages:\n{ctx}\n\nQuestion or claim: {query}\n\nAnswer:"
 
 
-_VERDICT = re.compile(r"^\W*verdict\W*:?\s*(.*)$", re.I | re.M)
-_EVIDENCE = re.compile(r"^\W*evidence\W*:?\s*", re.I | re.M)
+_VERDICT = re.compile(r"^[^\w\n]*verdict[ \t*]*:?[ \t*]*(.*)$", re.I | re.M)
+_EVIDENCE = re.compile(r"^[^\w\n]*evidence[ \t*]*:?[ \t*]*", re.I | re.M)
 _ATTRIBUTION = re.compile(
     r"^(according to( passage)?( \[?\d+\]?)?,?|((the )?(passage|study|context|authors?|it)( \[?\d+\]?)? )?"
     r"(says|states|shows|mentions|notes|reports|indicates|suggests|found|finds)( that)?:?)\s*", re.I)

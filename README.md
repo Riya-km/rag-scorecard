@@ -14,7 +14,15 @@ recall@k, MRR, nDCG and answer faithfulness in a results table.
 ## Results
 
 <!-- RESULTS:START -->
-_Run `python scripts/eval.py` to populate._
+Dataset: **scifact** (5183 docs, 13192 chunks), 300 test queries. Embeddings: `BAAI/bge-small-en-v1.5`, reranker: `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+Faithfulness on 5 sampled queries, top-4 chunks as context, generator `Qwen/Qwen2.5-1.5B-Instruct`, NLI judge `cross-encoder/nli-deberta-v3-base`.
+
+| strategy        | Recall@1   | Recall@5   | Recall@10   | Recall@20   | Recall@100   | MRR@10    | nDCG@10   |   Latency ms/q | Faithfulness   |   Abstain rate | Context precision@4   |
+|:----------------|:-----------|:-----------|:------------|:------------|:-------------|:----------|:----------|---------------:|:---------------|---------------:|:----------------------|
+| BM25            | 0.504      | 0.725      | 0.788       | 0.828       | 0.871        | 0.618     | 0.655     |             20 | 0.100          |              0 | 0.150                 |
+| Dense           | **0.579**  | 0.782      | 0.833       | 0.878       | 0.935        | 0.686     | 0.716     |             32 | **0.433**      |              0 | **0.300**             |
+| Hybrid (RRF)    | 0.557      | 0.780      | 0.841       | 0.884       | **0.952**    | 0.679     | 0.712     |             45 | 0.133          |              0 | **0.300**             |
+| Hybrid + Rerank | **0.579**  | **0.785**  | **0.853**   | **0.910**   | **0.952**    | **0.696** | **0.725** |           1795 | 0.200          |              0 | 0.250                 |
 <!-- RESULTS:END -->
 
 **Reading the table**
@@ -52,7 +60,9 @@ query ─► rag/retrievers.py (BM25 | Dense | Hybrid RRF | Hybrid+Rerank) ─�
 
 Generation runs locally on CPU with `Qwen/Qwen2.5-1.5B-Instruct` (no API key needed). If `OPENAI_API_KEY` is set, any
 OpenAI-compatible endpoint is used instead (`OPENAI_MODEL`, default `gpt-4o-mini`; `OPENAI_BASE_URL`).
-Because CPU generation takes ~35 s/answer, faithfulness uses a fixed random sample of queries (`--faithfulness-queries`, default 20, seed 13); answers are cached in `results/generations.jsonl`.
+Because CPU generation takes ~40-100 s/answer, faithfulness uses a fixed random sample of queries (`--faithfulness-queries`, default 5, seed 13); answers are cached in `results/generations.jsonl`.
+
+> **Caveat:** with only 5 sampled queries per strategy, the committed faithfulness numbers are indicative, not statistically meaningful. The 1.5B generator also often adds reasoning sentences ("This directly supports the claim that ...") that no passage entails, which pulls faithfulness down for every strategy. Set `OPENAI_API_KEY` and run `python scripts/eval.py --faithfulness-only --faithfulness-queries 300` for a proper estimate.
 
 ## Quickstart
 
@@ -98,4 +108,5 @@ app.py               Streamlit UI
 
 - NLI faithfulness is conservative with paraphrase and multi-passage synthesis; an LLM judge would complement it.
 - MiniLM-L6 is the smallest reasonable reranker; `BAAI/bge-reranker-base` should widen the rerank margin at ~5x the cost.
-- The faithfulness sample is small (CPU generation); with an API key, raise `--faithfulness-queries` to 300.
+- The faithfulness sample is tiny (CPU generation); with an API key, raise `--faithfulness-queries` to 300.
+- `--faithfulness-only` reuses the retrieval rows in `results/results.csv` and only re-runs generation/judging.
