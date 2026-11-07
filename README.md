@@ -52,7 +52,7 @@ query ─► rag/retrievers.py (BM25 | Dense | Hybrid RRF | Hybrid+Rerank) ─�
 
 Generation runs locally on CPU with `Qwen/Qwen2.5-1.5B-Instruct` (no API key needed). If `OPENAI_API_KEY` is set, any
 OpenAI-compatible endpoint is used instead (`OPENAI_MODEL`, default `gpt-4o-mini`; `OPENAI_BASE_URL`).
-Because CPU generation takes ~35 s/answer, faithfulness uses a fixed random sample of queries (`--faithfulness-queries`, default 30, seed 13); answers are cached in `results/generations.jsonl`.
+Because CPU generation takes ~35 s/answer, faithfulness uses a fixed random sample of queries (`--faithfulness-queries`, default 20, seed 13); answers are cached in `results/generations.jsonl`.
 
 ## Quickstart
 

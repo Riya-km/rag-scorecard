@@ -124,9 +124,11 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--dataset", default=CFG.dataset)
     p.add_argument("--strategies", nargs="+", default=list(STRATEGIES), choices=list(STRATEGIES))
-    p.add_argument("--faithfulness-queries", type=int, default=30, help="0 to skip generation")
+    p.add_argument("--faithfulness-queries", type=int, default=20, help="0 to skip generation")
     p.add_argument("--gen-model", default=CFG.gen_model)
     p.add_argument("--seed", type=int, default=13)
+    p.add_argument("--faithfulness-only", action="store_true",
+                   help="reuse retrieval rows from an existing results/results.csv")
     args = p.parse_args()
 
     cfg = Config(dataset=args.dataset)
@@ -135,8 +137,16 @@ def main():
     retrievers = build_retrievers(store, args.strategies)
     cfg.results_dir.mkdir(parents=True, exist_ok=True)
 
-    rows, per_query = evaluate_retrieval(store, retrievers, queries, qrels, cfg.ks)
-    df = pd.DataFrame(rows).set_index("key")
+    if args.faithfulness_only:
+        prev = pd.read_csv(cfg.results_dir / "results.csv")
+        names = {r.name: k for k, r in retrievers.items()}
+        prev = prev[prev["strategy"].isin(names)]
+        df = prev.assign(key=prev["strategy"].map(names)).set_index("key")
+        df = df[[c for c in df.columns if c.startswith(("strategy", "Recall@", "MRR", "nDCG", "Latency"))]]
+        per_query = None
+    else:
+        rows, per_query = evaluate_retrieval(store, retrievers, queries, qrels, cfg.ks)
+        df = pd.DataFrame(rows).set_index("key")
     meta = json.loads((store.dir / "meta.json").read_text()) | {
         "n_queries": len(qrels), "rerank_model": cfg.rerank_model, "nli_model": cfg.nli_model,
         "context_chunks": cfg.context_chunks}
@@ -159,9 +169,10 @@ def main():
     md = to_markdown(df, meta)
     (cfg.results_dir / "results.md").write_text(md + "\n")
     (cfg.results_dir / "run.json").write_text(json.dumps(meta, indent=2))
-    with open(cfg.results_dir / "per_query.jsonl", "w") as f:
-        for qid, d in per_query.items():
-            f.write(json.dumps({"qid": qid, **d}) + "\n")
+    if per_query is not None:
+        with open(cfg.results_dir / "per_query.jsonl", "w") as f:
+            for qid, d in per_query.items():
+                f.write(json.dumps({"qid": qid, **d}) + "\n")
 
     readme = ROOT / "README.md"
     if readme.exists() and README_START in readme.read_text():
