@@ -65,3 +65,8 @@ def test_evidence_sentence_cleanup():
     assert evidence_sentences(ev) == ["Mice improved after treatment [1].", "Rats did not respond [2]."]
     assert normalize_claim('Nonlinear Elasticity in Gels states: "Gels stiffen under strain."') == "Gels stiffen under strain."
     assert normalize_claim("CONCLUSIONS A substantial reduction was seen.") == "A substantial reduction was seen."
+
+
+def test_bare_citation_attribution():
+    from rag.generate import normalize_claim
+    assert normalize_claim('[1] states "mosGCTL-1 is induced by WNV"') == "MosGCTL-1 is induced by WNV"

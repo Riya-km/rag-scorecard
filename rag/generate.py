@@ -20,8 +20,8 @@ def build_prompt(query: str, passages: list[str]) -> str:
 _VERDICT = re.compile(r"^\W*verdict\W*:?\s*(.*)$", re.I | re.M)
 _EVIDENCE = re.compile(r"^\W*evidence\W*:?\s*", re.I | re.M)
 _ATTRIBUTION = re.compile(
-    r"^(according to( passage)?( \[?\d+\]?)?,?|(the )?(passage|study|context|authors?|it)( \[?\d+\]?)?"
-    r" (says|states|shows|mentions|notes|reports|indicates|suggests|found|finds)( that)?)\s*", re.I)
+    r"^(according to( passage)?( \[?\d+\]?)?,?|((the )?(passage|study|context|authors?|it)( \[?\d+\]?)? )?"
+    r"(says|states|shows|mentions|notes|reports|indicates|suggests|found|finds)( that)?:?)\s*", re.I)
 
 
 def parse_answer(answer: str) -> tuple[str, str]:

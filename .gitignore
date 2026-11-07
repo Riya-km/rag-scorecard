@@ -5,3 +5,4 @@ data/
 index/
 results/generations.jsonl
 .pytest_cache/
+results/eval.log
