@@ -1,0 +1,13 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+sentence-transformers>=3.0
+transformers>=4.44
+accelerate
+rank-bm25
+faiss-cpu
+numpy
+pandas
+tabulate
+tqdm
+streamlit>=1.36
+pytest

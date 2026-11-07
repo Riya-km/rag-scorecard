@@ -1,0 +1,6 @@
+BM25               nDCG@10=0.655 MRR@10=0.618 R@10=0.788 (19 ms/q)
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 3326.29it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Dense              nDCG@10=0.716 MRR@10=0.686 R@10=0.833 (22 ms/q)
+Hybrid (RRF)       nDCG@10=0.712 MRR@10=0.679 R@10=0.841 (30 ms/q)
+Loading weights:   0%|          | 0/105 [00:00<?, ?it/s]Loading weights: 100%|██████████| 105/105 [00:00<00:00, 2765.63it/s]

@@ -1,0 +1,11 @@
+{
+  "dataset": "scifact",
+  "n_docs": 5183,
+  "n_chunks": 13192,
+  "chunk_words": 120,
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "n_queries": 300,
+  "rerank_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "nli_model": "cross-encoder/nli-deberta-v3-base",
+  "context_chunks": 4
+}
